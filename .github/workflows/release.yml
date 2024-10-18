@@ -21,12 +21,11 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4.0.4
-      - name: Go to react directory
-        run: cd reactapp/
-      - name: Install dependancies
-        run: npm install
-      - name: Build
-        run: npm run build
+      - name: Change directory to reactapp
+        working-directory: ./reactapp
+        run: |
+          npm install
+          npm run build
       
 #3ème job: 
   build-back:
