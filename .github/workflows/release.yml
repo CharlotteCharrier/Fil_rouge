@@ -33,6 +33,11 @@ jobs:
         run: |
           npm install
           npm run build
+      - name: Get artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: spring
+          path: build/libs
       
 #3ème job: 
   build-back:
