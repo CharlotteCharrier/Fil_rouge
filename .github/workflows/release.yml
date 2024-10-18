@@ -12,13 +12,27 @@ jobs:
     uses: shiipou/github-actions/.github/workflows/get-version.yml@main      
 
 #2ème job: 
-  build:
+  build-front:
+    name: React build
+    runs-on: ubuntu-latest
+    steps:
+     #récupère le code du repo
+      - name: Checkout clone source code
+        uses: actions/checkout@v4
+      - name: setup Node.js
+        uses: actions/setup-node@v4.0.4
+      - name: check node version
+        run: npm -version
+      
+#3ème job: 
+  build-back:
    name: Spring build
    runs-on: ubuntu-latest
    #ici je définis needs:
    needs: 
    #va chercher le resultat du 1er job
       - get-version
+      - build-front
    #si get-version voit un commit qui permet une release (montée de version): fait le build, sinon fait pas le build
    #if: ${{ needs.get-version.outputs.will-release == 'true' }}
    steps:
@@ -93,7 +107,8 @@ jobs:
     #dépend de get-version et de build
     needs: 
       - get-version
-      - build
+      - build-back
+      - build-front
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4.1.8
