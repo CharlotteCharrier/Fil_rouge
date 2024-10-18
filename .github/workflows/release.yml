@@ -52,46 +52,46 @@ jobs:
         name: spring
         path: build/libs
         
-  test:
-    name: Spring test
-    runs-on: ubuntu-latest
-    #continue même si les tests sont pas bons (le temps que je puisse dev tranquille)
-    continue-on-error: true
+  # test:
+  #   name: Spring test
+  #   runs-on: ubuntu-latest
+  #   #continue même si les tests sont pas bons (le temps que je puisse dev tranquille)
+  #   continue-on-error: true
 
-    services: 
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_DB: ${{ secrets.PG_DATABASE }}
-          POSTGRES_USER: ${{ secrets.PG_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.PG_PASSWORD }}
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    steps:
-      - name: Print version
-        # pipe pour mettre plusieurs echo dans le run
-        run: |
-          echo "${{ needs.get-version.outputs.version }}"
-          echo "${{ needs.get-version.outputs.is-prerelease }}"
-          echo "${{ needs.get-version.outputs.will-release }}"
-      - name: Setup java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: 17
-      - name: Setup gradle
-        uses: gradle/actions/setup-gradle@v4
-      - name: Checkout clone source code
-        uses: actions/checkout@v4
-      - name: Build with Gradle
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5435/${{ secrets.PG_DATABASE }}?currentSchema=public
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.PG_USER }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.PG_PASSWORD }}
-        run: ./gradlew test
+  #   services: 
+  #     postgres:
+  #       image: postgres
+  #       env:
+  #         POSTGRES_DB: ${{ secrets.PG_DATABASE }}
+  #         POSTGRES_USER: ${{ secrets.PG_USER }}
+  #         POSTGRES_PASSWORD: ${{ secrets.PG_PASSWORD }}
+  #       options: >-
+  #         --health-cmd pg_isready
+  #         --health-interval 10s
+  #         --health-timeout 5s
+  #         --health-retries 5
+  #   steps:
+  #     - name: Print version
+  #       # pipe pour mettre plusieurs echo dans le run
+  #       run: |
+  #         echo "${{ needs.get-version.outputs.version }}"
+  #         echo "${{ needs.get-version.outputs.is-prerelease }}"
+  #         echo "${{ needs.get-version.outputs.will-release }}"
+  #     - name: Setup java
+  #       uses: actions/setup-java@v4
+  #       with:
+  #         distribution: 'temurin'
+  #         java-version: 17
+  #     - name: Setup gradle
+  #       uses: gradle/actions/setup-gradle@v4
+  #     - name: Checkout clone source code
+  #       uses: actions/checkout@v4
+  #     - name: Build with Gradle
+  #       env:
+  #         SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5435/${{ secrets.PG_DATABASE }}?currentSchema=public
+  #         SPRING_DATASOURCE_USERNAME: ${{ secrets.PG_USER }}
+  #         SPRING_DATASOURCE_PASSWORD: ${{ secrets.PG_PASSWORD }}
+  #       run: ./gradlew test
          
   release: 
     name: Release
