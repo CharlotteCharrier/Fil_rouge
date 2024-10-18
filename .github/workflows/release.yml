@@ -8,9 +8,13 @@ permissions:
 jobs:
 #1er job:
   get-version:
-  # utilise un bout de workflow de Flavien
-    uses: shiipou/github-actions/.github/workflows/get-version.yml@main      
-
+    # Utilise un workflow externe pour obtenir la version actuelle basée sur les branches de release et prerelease
+    uses: shiipou/github-actions/.github/workflows/get-version.yml@main
+    with:
+      # Définir la branche 'main' pour les releases officielles
+      release-branches: '^(main)$'
+      # Définir la branche 'beta' pour les pre-releases
+      prerelease-branches: '^(dev|ci)$'
 #2ème job: 
   build-front:
     name: React build
