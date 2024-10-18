@@ -51,6 +51,10 @@ jobs:
     runs-on: ubuntu-latest
     #continue même si les tests sont pas bons (le temps que je puisse dev tranquille)
     continue-on-error: true
+    name: Spring test
+    runs-on: ubuntu-latest
+    #continue même si les tests sont pas bons (le temps que je puisse dev tranquille)
+    continue-on-error: true
 
     services: 
       postgres:
