@@ -19,10 +19,12 @@ jobs:
      #récupère le code du repo
       - name: Checkout clone source code
         uses: actions/checkout@v4
-      - name: setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4.0.4
-      - name: check node version
-        run: npm -version
+      - name: Install dependancies
+        run: npm install
+      - name: Build
+        run: npm run build
       
 #3ème job: 
   build-back:
