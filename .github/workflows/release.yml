@@ -15,10 +15,13 @@ jobs:
       release-branches: '^(main)$'
       # Définir la branche 'beta' pour les pre-releases
       prerelease-branches: '^(dev|ci)$'
+      
 #2ème job: 
   build-front:
     name: React build
     runs-on: ubuntu-latest
+    needs:
+      - get-version
     steps:
      #récupère le code du repo
       - name: Checkout clone source code
