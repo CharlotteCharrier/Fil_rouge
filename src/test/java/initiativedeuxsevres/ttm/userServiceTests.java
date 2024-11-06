@@ -1,6 +1,6 @@
 package initiativedeuxsevres.ttm;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -48,6 +48,6 @@ public class userServiceTests {
                 .supports(List.of(Support.INFORMATIQUE))
                 .build();
 
-        assertEquals(user1.getFields().get(1), userServiceImpl.hasCommonFields(user1, user2));
+        assertTrue(userServiceImpl.hasCommonFields(user1, user2));
     }
 }
