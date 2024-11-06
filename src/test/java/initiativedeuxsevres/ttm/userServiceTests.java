@@ -1,11 +1,15 @@
 package initiativedeuxsevres.ttm;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,13 +19,17 @@ import initiativedeuxsevres.ttm.model.Fields;
 import initiativedeuxsevres.ttm.model.Role;
 import initiativedeuxsevres.ttm.model.Support;
 import initiativedeuxsevres.ttm.model.User;
+import initiativedeuxsevres.ttm.repository.UserRepository;
 import initiativedeuxsevres.ttm.service.Impl.UserServiceImpl;
 
 @SpringBootTest
 public class UserServiceTests {
 
-    @Autowired
+    @InjectMocks
     UserServiceImpl userServiceImpl;
+
+    @Mock
+    private UserRepository userRepository;
 
     private User user1;
     private User user2;
@@ -54,5 +62,12 @@ public class UserServiceTests {
     @Test
     public void compareFields() {
         assertTrue(userServiceImpl.hasCommonFields(user1, user2));
+    }
+
+
+    @Test
+    public void getAllUsers() {
+        when(userRepository.findAll()).thenReturn(List.of(user1, user2));
+        assertEquals(2, userServiceImpl.getAllUsers().size());
     }
 }

@@ -1,5 +1,6 @@
 package initiativedeuxsevres.ttm.service.Impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,5 +59,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean hasCommonFields(User user1, User user2) {
        return user2.getFields().stream().anyMatch(field -> user1.getFields().contains(field));
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }
