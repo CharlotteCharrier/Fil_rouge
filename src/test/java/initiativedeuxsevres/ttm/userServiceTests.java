@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -14,15 +14,12 @@ import initiativedeuxsevres.ttm.model.Fields;
 import initiativedeuxsevres.ttm.model.Role;
 import initiativedeuxsevres.ttm.model.Support;
 import initiativedeuxsevres.ttm.model.User;
-import initiativedeuxsevres.ttm.repository.UserRepository;
 import initiativedeuxsevres.ttm.service.Impl.UserServiceImpl;
 
-public class userServiceTests {
+@SpringBootTest
+public class UserServiceTests {
 
-    @Mock
-    UserRepository userRepository;
-
-    @InjectMocks
+    @Autowired
     UserServiceImpl userServiceImpl;
 
     @Test
