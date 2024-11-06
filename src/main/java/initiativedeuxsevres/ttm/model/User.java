@@ -1,5 +1,8 @@
 package initiativedeuxsevres.ttm.model;
 
+import java.util.List;
+
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -32,5 +35,13 @@ public class User {
     @NonNull
     private String password;
 
+    @NonNull
+    private Role role;
+
+    @ElementCollection
+    private List<Fields> fields;
+
+    @ElementCollection
+    private List<Support> supports;
 
 }

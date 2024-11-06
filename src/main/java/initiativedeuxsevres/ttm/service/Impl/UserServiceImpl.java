@@ -30,6 +30,7 @@ public class UserServiceImpl implements UserService {
                 .username(user.getUsername())
                 .password(passwordEncoder.encode(user.getPassword()))
                 .email(user.getEmail())
+                .role(user.getRole())
                 .build();
         userRepository.save(userEntity);
     }
@@ -52,5 +53,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public boolean hasCommonFields(User user1, User user2) {
+       return user2.getFields().stream().anyMatch(field -> user1.getFields().contains(field));
     }
 }

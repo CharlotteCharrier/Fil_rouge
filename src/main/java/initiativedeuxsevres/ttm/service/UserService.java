@@ -13,4 +13,6 @@ public interface UserService {
     Optional<User> from(Authentication authentication);
 
     Optional<User> findByUsername(String username);
+
+    boolean hasCommonFields(User user1, User user2);
 }
