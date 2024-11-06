@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,11 +23,14 @@ public class UserServiceTests {
     @Autowired
     UserServiceImpl userServiceImpl;
 
-    @Test
-    public void compareFields() {
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private User user1;
+    private User user2;
 
-        User user1 = User.builder()
+    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @BeforeEach
+    public void setup() {
+         user1 = User.builder()
                 .id(1L)
                 .username("Charlotte")
                 .email("charlotte.test@test.com")
@@ -35,7 +39,7 @@ public class UserServiceTests {
                 .fields(List.of(Fields.INDUSTRIE, Fields.TRANSPORTS))
                 .build();
 
-        User user2 = User.builder()
+         user2 = User.builder()
                 .id(2L)
                 .username("Omer")
                 .email("omer.test@test.com")
@@ -45,6 +49,10 @@ public class UserServiceTests {
                 .supports(List.of(Support.INFORMATIQUE))
                 .build();
 
+    }
+
+    @Test
+    public void compareFields() {
         assertTrue(userServiceImpl.hasCommonFields(user1, user2));
     }
 }
