@@ -1,0 +1,156 @@
+on:
+  push:
+
+#on ajoute au token le droit d'écrire la release (modifie la liste des droits auxquels ce token nous donne accès)
+permissions:
+  contents: write
+ 
+jobs:
+#1er job:
+  get-version:
+    # Utilise un workflow externe pour obtenir la version actuelle basée sur les branches de release et prerelease
+    uses: shiipou/github-actions/.github/workflows/get-version.yml@main
+    with:
+      # Définir la branche 'main' pour les releases officielles
+      release-branches: '^(main)$'
+      # Définir la branche 'beta' pour les pre-releases
+      prerelease-branches: '^(dev|ci)$'
+      
+#2ème job: 
+  build-front:
+    name: React build
+    runs-on: ubuntu-latest
+    needs:
+      - get-version
+    steps:
+     #récupère le code du repo
+      - name: Checkout clone source code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.0.4
+      - name: Change directory to reactapp
+        working-directory: ./reactapp
+        run: |
+          npm install
+          npm run build
+      - name: Get artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: build/libs
+      
+#3ème job: 
+  build-back:
+   name: Spring build
+   runs-on: ubuntu-latest
+   #ici je définis needs:
+   needs: 
+   #va chercher le resultat du 1er job
+      - get-version
+      - build-front
+   #si get-version voit un commit qui permet une release (montée de version): fait le build, sinon fait pas le build
+   #if: ${{ needs.get-version.outputs.will-release == 'true' }}
+   steps:
+     #step 1
+     - name: Setup java
+       uses: actions/setup-java@v4
+       with:
+         distribution: 'temurin'
+         java-version: 17
+     #step 2
+     #récupère le code du repo
+     - name: Checkout clone source code
+       uses: actions/checkout@v4
+     #step 3
+     - name: Setup gradle
+       uses: gradle/actions/setup-gradle@v4
+     #step 4
+     - name: Build with Gradle
+       env: 
+         VERSION : "${{ needs.get-version.outputs.version }}"
+       run: ./gradlew bootjar
+     #step 5
+     - uses: actions/upload-artifact@v4
+       with:
+       # je peux ici définir un name pour ne viser que cet artefact dans le download du job release
+        path: build/libs
+        
+  test:
+    name: Spring test
+    runs-on: ubuntu-latest
+    #continue même si les tests sont pas bons (le temps que je puisse dev tranquille)
+    continue-on-error: true
+
+    services: 
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: ${{ secrets.PG_DATABASE }}
+          POSTGRES_USER: ${{ secrets.PG_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.PG_PASSWORD }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Print version
+        # pipe pour mettre plusieurs echo dans le run
+        run: |
+          echo "${{ needs.get-version.outputs.version }}"
+          echo "${{ needs.get-version.outputs.is-prerelease }}"
+          echo "${{ needs.get-version.outputs.will-release }}"
+      - name: Setup java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - name: Setup gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Checkout clone source code
+        uses: actions/checkout@v4
+      - name: Build with Gradle
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5435/${{ secrets.PG_DATABASE }}?currentSchema=public
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.PG_USER }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.PG_PASSWORD }}
+        run: ./gradlew test
+         
+  release: 
+    name: Release
+    runs-on: ubuntu-latest
+    #dépend de get-version et de build
+    needs: 
+      - get-version
+      - build-back
+      - build-front
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4.1.8
+        with:
+          #endroit où ça se télécharge
+          path: build/
+      - name: zip artifacts
+        run: zip -r ttm_fil_rouge.zip build/*
+        #met les changelogs dans un nouveau fichier
+      - name: Print changelogs
+        run: echo "${{ needs.get-version.outputs.changelogs }}" >> changelogs.md
+      - name: Create Github Release
+        env:
+        #récupérer la version
+          VERSION: "${{ needs.get-version.outputs.version }}"
+        #récupérer le nom du repo sous format owner/repository
+          REPO: "${{ github.repository }}"
+        #récupérer le numéro du commit qui a déclenché le workflow
+          COMMIT : "${{ github.sha }}"
+        #token créé par github pour le commit
+        #pas besoin de le spécifier dans la commande d'en dessous car 'gh release create' va le lire automatiquement, 
+        #contrairement aux autres variables d'environnement du dessus
+          GH_TOKEN: "${{ github.token }}"
+      #pipe pour commandes sur plusieurs lignes
+      #on spécifie le numéro de commit car on veut que le workflow se lance sur le commit qui l'a déclenché 
+      #et pas sur le dernier commit (au cas où les tests du dernier commit ne passent pas par exemple,
+      #on veut pas que ça impacte notre commit parce que peut-être que nous ça passe!)
+        run: |
+          gh release create --repo $REPO --target $COMMIT -F changelogs.md "v$VERSION" ttm_fil_rouge.zip
+
+    
