@@ -65,4 +65,10 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
+    @Override
+    public User addParrain(User user1, User user2) {
+        user2.setParrain(user1);
+        return userRepository.save(user2);
+    }
 }

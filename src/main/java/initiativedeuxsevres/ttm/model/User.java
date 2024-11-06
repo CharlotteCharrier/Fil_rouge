@@ -6,6 +6,7 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,5 +44,8 @@ public class User {
 
     @ElementCollection
     private List<Support> supports;
+
+    @OneToOne
+    private User parrain;
 
 }

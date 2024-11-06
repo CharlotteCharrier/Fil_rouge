@@ -18,4 +18,6 @@ public interface UserService {
     boolean hasCommonFields(User user1, User user2);
 
     List<User> getAllUsers();
+
+    User addParrain(User user1, User user2);
 }
