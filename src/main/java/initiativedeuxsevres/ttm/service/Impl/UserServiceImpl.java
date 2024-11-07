@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import initiativedeuxsevres.ttm.DTO.RegisterDto;
+import initiativedeuxsevres.ttm.DTO.UserDto;
 import initiativedeuxsevres.ttm.model.User;
 import initiativedeuxsevres.ttm.repository.UserRepository;
 import initiativedeuxsevres.ttm.service.UserService;
@@ -26,12 +26,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveUser(RegisterDto user) {
+    public void saveUser(UserDto user) {
         User userEntity = User.builder()
                 .username(user.getUsername())
                 .password(passwordEncoder.encode(user.getPassword()))
                 .email(user.getEmail())
                 .role(user.getRole())
+                .fields(user.getFields())
+                .supports((user.getSupports()))
                 .build();
         userRepository.save(userEntity);
     }
@@ -67,8 +69,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User addParrain(User user1, User user2) {
+    public void addMatch(User user1, User user2) {
         user2.setParrain(user1);
-        return userRepository.save(user2);
+        user1.getPorteurs().add(user2);
+        userRepository.save(user1);
+        userRepository.save(user2);
+
+
     }
 }
