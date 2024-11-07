@@ -1,0 +1,5 @@
+package initiativedeuxsevres.ttm.model;
+
+public enum Support {
+    RESSOURCES_HUMAINES, FINANCE_COMPTABILITE, JURIDIQUE, INFORMATIQUE, COMMERCIAL_COMMUNICATION
+}

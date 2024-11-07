@@ -1,5 +1,6 @@
 package initiativedeuxsevres.ttm.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
@@ -13,4 +14,10 @@ public interface UserService {
     Optional<User> from(Authentication authentication);
 
     Optional<User> findByUsername(String username);
+
+    boolean hasCommonFields(User user1, User user2);
+
+    List<User> getAllUsers();
+
+    User addParrain(User user1, User user2);
 }

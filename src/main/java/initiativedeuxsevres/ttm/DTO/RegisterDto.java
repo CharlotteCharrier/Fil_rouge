@@ -1,5 +1,6 @@
 package initiativedeuxsevres.ttm.DTO;
 
+import initiativedeuxsevres.ttm.model.Role;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,5 +22,8 @@ public class RegisterDto {
     private String password;
 
     @NotEmpty(message = "Password confirm must not be empty")
-    private String ConfirmPassword;
+    private String confirmPassword;
+
+    @NotEmpty(message = "Role must not be empty")
+    private Role role;
 }

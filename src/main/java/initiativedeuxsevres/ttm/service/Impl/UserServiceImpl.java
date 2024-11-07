@@ -1,5 +1,6 @@
 package initiativedeuxsevres.ttm.service.Impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class UserServiceImpl implements UserService {
                 .username(user.getUsername())
                 .password(passwordEncoder.encode(user.getPassword()))
                 .email(user.getEmail())
+                .role(user.getRole())
                 .build();
         userRepository.save(userEntity);
     }
@@ -52,5 +54,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public boolean hasCommonFields(User user1, User user2) {
+       return user2.getFields().stream().anyMatch(field -> user1.getFields().contains(field));
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public User addParrain(User user1, User user2) {
+        user2.setParrain(user1);
+        return userRepository.save(user2);
     }
 }
