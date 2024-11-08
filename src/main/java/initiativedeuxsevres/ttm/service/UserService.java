@@ -5,11 +5,11 @@ import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 
-import initiativedeuxsevres.ttm.DTO.RegisterDto;
+import initiativedeuxsevres.ttm.DTO.UserDto;
 import initiativedeuxsevres.ttm.model.User;
 
 public interface UserService {
-    void saveUser(RegisterDto userMapping);
+    void saveUser(UserDto userMapping);
 
     Optional<User> from(Authentication authentication);
 
@@ -19,5 +19,5 @@ public interface UserService {
 
     List<User> getAllUsers();
 
-    User addParrain(User user1, User user2);
+    void addMatch(User user1, User user2);
 }

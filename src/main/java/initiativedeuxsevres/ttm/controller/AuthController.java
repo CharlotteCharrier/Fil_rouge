@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import initiativedeuxsevres.ttm.DTO.RegisterDto;
+import initiativedeuxsevres.ttm.DTO.UserDto;
 import initiativedeuxsevres.ttm.model.User;
 import initiativedeuxsevres.ttm.service.UserService;
 import jakarta.validation.Valid;
@@ -35,8 +35,15 @@ public AuthController(UserService userService) {
 }
 
 @PostMapping("/register/save")
-    public String registerUser(@Valid @ModelAttribute RegisterDto userMapping) {
+    public String registerUser(@Valid @ModelAttribute UserDto userMapping) {
         userService.saveUser(userMapping);
         return "redirect:/home";
+}
+
+@PostMapping("/match")
+    public String addParrain(@Valid @ModelAttribute User parrain, User porteur) {
+    userService.addMatch(parrain, porteur);
+
+    return "redirect:/home";
 }
 }
