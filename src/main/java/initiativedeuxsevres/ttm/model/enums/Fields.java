@@ -1,4 +1,4 @@
-package initiativedeuxsevres.ttm.model;
+package initiativedeuxsevres.ttm.model.enums;
 
 public enum Fields {
     ACTIVITES_SERVICES_ADMINISTRATIFS_ET_SOUTIEN, ACTIVITES_SPECIALISEES_SCIENTIFIQUES_ET_TECHNIQUES,

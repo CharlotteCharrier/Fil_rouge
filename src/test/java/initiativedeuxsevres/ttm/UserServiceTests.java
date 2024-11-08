@@ -12,14 +12,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import initiativedeuxsevres.ttm.model.Fields;
-import initiativedeuxsevres.ttm.model.Role;
-import initiativedeuxsevres.ttm.model.Support;
+import initiativedeuxsevres.ttm.model.enums.Fields;
+import initiativedeuxsevres.ttm.model.enums.Role;
+import initiativedeuxsevres.ttm.model.enums.Support;
 import initiativedeuxsevres.ttm.model.User;
 import initiativedeuxsevres.ttm.repository.UserRepository;
 import initiativedeuxsevres.ttm.service.Impl.UserServiceImpl;
@@ -75,6 +73,16 @@ public class UserServiceTests {
 
     @Test
     public void addParrainToAPorteurDeProjet() {
+        User userOutput1 = User.builder()
+                .id(1L)
+                .username("Charlotte")
+                .email("charlotte.test@test.com")
+                .password(user1.getPassword())
+                .role(Role.PARRAIN)
+                .fields(List.of(Fields.INDUSTRIE, Fields.TRANSPORTS))
+                .porteurs(List.of(user2))
+                .build();
+
         User userOutput2 = User.builder()
                 .id(2L)
                 .username("Omer")
@@ -86,8 +94,12 @@ public class UserServiceTests {
                 .parrain(user1)
                 .build();
 
-        when(userRepository.save(userOutput2)).thenReturn(userOutput2);
+        when(userRepository.save(user1)).thenReturn(userOutput1);
+        when(userRepository.save(user2)).thenReturn(userOutput2);
 
-        assertEquals(userOutput2, userServiceImpl.addParrain(user1, user2));
+        userServiceImpl.addMatch(user1, user2);
+
+        assertEquals(userOutput1.getUsername(), user2.getParrain().getUsername());
+        assertEquals(userOutput2.getUsername(), user1.getPorteurs().get(0).getUsername());
     }
 }
