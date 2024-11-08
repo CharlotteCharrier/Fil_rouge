@@ -1,22 +1,17 @@
 import "./App.css";
 
+import Feed from "./Feed";
+import Home from "./Home";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 function App() {
   return (
-    <div className="App">
-      <form action="/register/save" method="post">
-        <div>
-          <label for="email">Adresse mail</label>
-          <input type="email" name="email" id="email" placeholder="Email" />
-        </div>
-
-        <div>
-          <label for="password">Mot de passe</label>
-          <input type="password" name="password" id="password" placeholder="Password" />
-        </div>
-
-        <input type="submit" value="Register" id="registerBtn" />
-      </form>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" Component={Home} />
+        <Route path="/feed" Component={Feed} />
+      </Routes>
+    </Router>
   );
 }
 
